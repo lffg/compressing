@@ -34,7 +34,9 @@ pub fn enc_returning_dict(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io
             dict.insert(mem::replace(&mut seq, vec![c]), code);
         }
     }
-    emit(&seq, &dict, out)?;
+    if !seq.is_empty() {
+        emit(&seq, &dict, out)?;
+    }
 
     Ok(dict)
 }
@@ -75,13 +77,30 @@ fn build_default_enc_dict() -> EncDict {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn test_basic_seq() {
-        let mut out = Vec::new();
-        let mut src = b"ABBABBBABBA".as_ref();
-        enc(&mut src, &mut out).unwrap();
-        assert_eq!(out, c(&[65, 66, 66, 256, 257, 259, 65]));
+
+    macro_rules! test_enc {
+        ($( ($name:ident, $src:expr, $expected:expr), )+) => {
+            $(
+                #[test]
+                fn $name() {
+                    let mut out = Vec::new();
+                    let mut src = ($src).as_ref();
+                    enc(&mut src, &mut out).unwrap();
+                    assert_eq!(out, c(&$expected));
+                }
+            )+
+        };
     }
+
+    test_enc![
+        (
+            test_enc_basic_seq_1,
+            b"ABBABBBABBA",
+            [65, 66, 66, 256, 257, 259, 65]
+        ),
+        (test_enc_basic_seq_2, b"ABABA", [65, 66, 256, 65]),
+        (test_enc_basic_seq_3, b"ABABABA", [65, 66, 256, 258]),
+    ];
 
     fn c(codes: &[Code]) -> Vec<u8> {
         let mut out = Vec::new();
