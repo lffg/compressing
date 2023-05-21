@@ -59,6 +59,7 @@ pub fn dec(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io::Result<()> {
     let mut dict = build_default_dec_dict();
     let mut seq = Vec::<u8>::new();
 
+    let mut next_code = dict.len();
     while let Some(code) = read_u16(src)? {
         let decoded = dict
             .entry(code)
@@ -71,12 +72,12 @@ pub fn dec(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io::Result<()> {
         out.write_all(&decoded)?;
 
         if !seq.is_empty() {
-            let next_code = dict.len().try_into().unwrap();
-            dict.insert(next_code, {
+            dict.insert(next_code as _, {
                 let mut s = mem::take(&mut seq);
                 s.push(decoded[0]);
                 s
             });
+            next_code += 1;
         }
 
         seq = decoded;
