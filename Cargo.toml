@@ -7,5 +7,8 @@ name = "compressing"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+bitvec = "1"
+
 [dev-dependencies]
 paste = "1.0.12"
