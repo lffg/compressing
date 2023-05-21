@@ -1,3 +1,4 @@
+use crate::shared::{read_u16, read_u8};
 use std::{collections::HashMap, io, mem};
 
 pub type Code = u16;
@@ -81,27 +82,6 @@ pub fn dec(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io::Result<()> {
 
     Ok(())
 }
-
-macro_rules! read_fn {
-    ($(fn $name:ident() -> $ty:ty ;)+) => {
-        $(
-            #[inline(always)]
-            fn $name(src: &mut dyn io::Read) -> io::Result<Option<$ty>> {
-                let mut buf = [0; mem::size_of::<$ty>()];
-                match src.read_exact(&mut buf) {
-                    Ok(_) => Ok(Some(<$ty>::from_be_bytes(buf))),
-                    Err(error) if error.kind() == io::ErrorKind::UnexpectedEof => Ok(None),
-                    Err(error) => Err(error),
-                }
-            }
-        )+
-    };
-}
-
-read_fn!(
-    fn read_u8() -> u8;
-    fn read_u16() -> u16;
-);
 
 fn emit(seq: &[u8], dict: &EncDict, out: &mut dyn io::Write) -> io::Result<()> {
     let code = Code::to_be_bytes(dict[seq]);
