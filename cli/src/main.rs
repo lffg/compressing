@@ -27,6 +27,7 @@ struct Cli {
 #[derive(Copy, Clone, Debug, ValueEnum)]
 enum Algorithm {
     Lzw,
+    Huffman,
 }
 
 #[derive(Debug, Subcommand)]
@@ -54,9 +55,11 @@ fn main() -> io::Result<()> {
     let stats = match cmd.action {
         Action::Compress(_) => match cmd.algorithm {
             Algorithm::Lzw => manager.run(lzw::enc)?,
+            Algorithm::Huffman => todo!(),
         },
         Action::Decompress(_) => match cmd.algorithm {
             Algorithm::Lzw => manager.run(lzw::dec)?,
+            Algorithm::Huffman => todo!(),
         },
     };
 

@@ -5,7 +5,7 @@ compressed="$orig.cmp"
 recovered="recovered-$orig"
 
 cli() {
-    ./target/release/cli "$@"
+    ./target/release/cmpr "$@"
 }
 
 cargo build --release
