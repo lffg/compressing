@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 compressing.path = ".."
+stat.path = "../stat"
 clap = { version = "4", features = ["derive"] }
