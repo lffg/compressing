@@ -5,17 +5,17 @@ compressed="$orig.cmp"
 recovered="recovered-$orig"
 
 cli() {
-    ./target/debug/cli "$@"
+    ./target/release/cli "$@"
 }
 
-cargo build
+cargo build --release
 cli --version
 
 echo "compressing [$orig] into [$compressed]..."
-cli -a lzw compress -o "$compressed" "$orig"
+cli -a lzw --stats compress -o "$compressed" "$orig"
 
 echo "decompressing [$compressed] into [$recovered]..."
-cli -a lzw decompress -o "$recovered" "$compressed"
+cli -a lzw --stats decompress -o "$recovered" "$compressed"
 
 if diff "$orig" "$recovered" &> /dev/null; then
     echo "ok"
