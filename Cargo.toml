@@ -1,3 +1,7 @@
+[workspace]
+members = ["cli"]
+default-members = ["cli"]
+
 [package]
 name = "compressing"
 version = "0.1.0"

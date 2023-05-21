@@ -11,6 +11,10 @@ pub type DecDict = HashMap<Code, Vec<u8>>;
 ///
 /// Fails if any of the underlying I/O operations fail (i.e., reading from `src`
 /// or writing to `out`).
+///
+/// # Panics
+///
+/// Panics if the dictionary grows past `u16`'s bounds.
 pub fn enc(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io::Result<()> {
     enc_returning_dict(src, out)?;
     Ok(())
@@ -47,6 +51,10 @@ pub fn enc_returning_dict(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io
 ///
 /// Fails if any of the underlying I/O operations fail (i.e., reading from `src`
 /// or writing to `out`).
+///
+/// # Panics
+///
+/// Panics if the dictionary grows past `u16`'s bounds.
 pub fn dec(src: &mut dyn io::Read, out: &mut dyn io::Write) -> io::Result<()> {
     let mut dict = build_default_dec_dict();
     let mut seq = Vec::<u8>::new();
